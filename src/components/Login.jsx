@@ -1,29 +1,28 @@
-import React,{useState} from 'react';
-export default function Login() {
-  // const [enteredEmail,setEnteredEmail]=useState('');
-  // const [enteredPassword,setEnteredPassword]=useState('');
+import React,{useState,useRef} from 'react';
 
-  const [enteredValues,setEnteredValues]=useState({
-    email:'',
-    password:'',
-  });
+export default function Login() {
+
+  const [emailIsInvalid,setEmailIsInvalid]=useState(false);
+  const email=useRef();
+  const password =useRef();
 
   function handleSubmit (event){
     event.preventDefault();
 
-    console.log(enteredValues);
+    const enteredEmail = email.current.value;
+    const enteredPassword = password.current.value;
+
+    const emailIsValid = enteredEmail.includes('@');
+
+    if (!emailIsValid){
+      setEmailIsInvalid(true);
+      return;
+    }
+    setEmailIsInvalid(false);
+
+    console.log('sending HTTP request......');
   }
 
-  function handleInputChange(identifier,value){
-    setEnteredValues(prevValues=>({
-      ...prevValues,
-      [identifier]:value
-    }))
-  }
-
-  // function handleEmailChange(event){
-  //   setEnteredEmail(event.target.value);
-  // }
   return (
     <form onSubmit={handleSubmit}>
       <h2>Login</h2>
@@ -35,9 +34,13 @@ export default function Login() {
             id="email" 
             type="email" 
             name="email" 
-            onChange={(event)=>handleInputChange('email',event.target.value)}
-            value={enteredValues.email}
+            ref={email}
+            // onChange={(event)=>handleInputChange('email',event.target.value)}
+            // value={enteredValues.email}
             />
+            <div className="control-error">
+              {emailIsInvalid && <p>Please enter a valid address.</p>}
+            </div>
         </div>
 
         <div className="control no-margin">
@@ -45,8 +48,10 @@ export default function Login() {
           <input 
             id="password" 
             type="password" 
-            onChange={(event)=>handleInputChange('password',event.target.value)}
-            value={enteredValues.password}
+            name="password"
+            ref={password}
+            // onChange={(event)=>handleInputChange('password',event.target.value)}
+            // value={enteredValues.password}
             />
         </div>
       </div>
